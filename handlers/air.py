@@ -19,11 +19,11 @@ async def air(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     city = CITIES[city_key]
-    await update.message.reply_text(f"⏳ Fetching data for *{city.name}*...", parse_mode="Markdown")
+    await update.message.reply_text(f"Smogzilla is scanning the air over {city.name}🌆🦖...", parse_mode="Markdown")
 
     data = await fetch_by_area(city.lat, city.lng)
     if not data:
-        await update.message.reply_text(f"😔 No data available for *{city.name}*.", parse_mode="Markdown")
+        await update.message.reply_text(f"📡 No sensor data received for *{city.name}*.", parse_mode="Markdown")
         return
 
     await update.message.reply_text(format_message(city_key, data), parse_mode="Markdown")

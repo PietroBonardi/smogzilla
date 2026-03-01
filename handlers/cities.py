@@ -5,8 +5,8 @@ from utils.cities import CITIES
 
 async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     city_list = "\n".join(
-        f"  • {c.name} ({c.region})" 
-        for c in sorted(CITIES.values(), key=lambda c: c.region)
+        f"  - {c.name} ({c.region})" 
+        for c in sorted(CITIES.values(), key=lambda c: c.name)
     )
     await update.message.reply_text(
         f"🦖 *Available cities:*\n\n{city_list}\n\n"
