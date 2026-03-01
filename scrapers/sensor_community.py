@@ -23,8 +23,8 @@ def _parse_readings(data: list[dict]) -> dict | None:
         pm25 = values.get("P2")
         results["sensor_id"].append(sensor_id)
         results["timestamp"].append(read["timestamp"])
-        results["pm2.5"].append(pm10)
-        results["pm10"].append(pm25)
+        results["pm2.5"].append(pm25)
+        results["pm10"].append(pm10)
 
     return results
 
