@@ -7,11 +7,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     await update.message.reply_text(
-        "🦖🔥 *Welcome to Smogzilla!*\n\n"
-        "Real-time air quality reporting for Italian cities.\n\n"
-        "*$ Commands:*\n"
-        "  - `/cities` — list all available cities\n"
-        "  - `/air <city_name>` — get air quality for a city\n\n"
-        "_Data provided by Sensor.Community_",
+        "*SMOGZILLA*\n"
+        "```\n"
+        "Real-time air quality for Italian cities.\n\n"
+        "$ /cities: list available cities\n"
+        "$ /air <city_name>: get air quality report\n\n"
+        "data: sensor.community\n"
+        "```",
         parse_mode="Markdown"
     )

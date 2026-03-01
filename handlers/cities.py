@@ -9,18 +9,10 @@ async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for c in sorted(CITIES.values(), key=lambda c: c.name)
     )
     await update.message.reply_text(
-        f"🦖 *Available cities:*\n\n{city_list}\n\n"
-        f"Usage: `/air <cityname>` e.g. `/air brescia`",
+        f"*SMOGZILLA // CITIES*\n"
+        f"```\n"
+        f"{city_list}\n\n"
+        f"$ /air <city_name>\n"
+        f"```",
         parse_mode="Markdown"
     )
-# ```
-
-# The cities list is sorted by region so it reads naturally:
-# ```
-# - Bergamo (Lombardia)
-# - Brescia (Lombardia)
-# - Como (Lombardia)
-# ...
-# - Bologna (Emilia-Romagna)
-# - Modena (Emilia-Romagna)
-# ...
