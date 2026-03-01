@@ -9,7 +9,8 @@ def main():
     app.add_handler(CommandHandler("start",  start))
     app.add_handler(CommandHandler("air",    air))
     app.add_handler(CommandHandler("cities", cities))
-    print("🦖 Smogzilla bot is running...")
+    print("="*30)
+    print("Smogzilla bot is running...")
     app.run_polling()
 
 if __name__ == "__main__":
