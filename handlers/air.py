@@ -10,7 +10,7 @@ async def air(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if not context.args:
         await update.message.reply_text(
-            "```\n!! missing argument\n$ /air <city_name>\n```",
+            "```\n!! missing argument\n$ /air <city>\n```",
             parse_mode="Markdown"
         )
         return

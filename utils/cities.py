@@ -63,4 +63,6 @@ CITIES: dict[str, City] = {
     "messina":   City("Messina",   38.1938, 15.5540,  "ME", "Sicilia"),
     "cagliari":  City("Cagliari",  39.2238, 9.1217,   "CA", "Sardegna"),
     "sassari":   City("Sassari",   40.7259, 8.5557,   "SS", "Sardegna"),
+    
+    "camelot": City("Camelot",51.7520, -1.2577, "CA", "Camelot"),
 }

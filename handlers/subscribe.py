@@ -10,7 +10,7 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if not context.args:
         await update.message.reply_text(
-            "!! missing argument\n$ /subscribe <city_name>"
+            "!! missing argument\n$ /subscribe <city>"
         )
         return
 
@@ -32,5 +32,5 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     await update.message.reply_text(
-        f"> subscribed to {city.name.upper()}//daily report at 08:00"
+        f"> subscribed to {city.name.upper()} - daily report at 08:00"
     )

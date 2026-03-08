@@ -10,7 +10,7 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
     if not context.args:
         await update.message.reply_text(
-            "!! missing argument\n$ /unsubscribe <city_name>"
+            "!! missing argument\n$ /unsubscribe <city>"
         )
         return
 

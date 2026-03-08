@@ -14,7 +14,7 @@ async def subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     if not subs:
         await update.message.reply_text(
             "!! no active subscriptions\n"
-            "$ /subscribe <city_name> to add one"
+            "$ /subscribe <city> to add one"
         )
         return
 
@@ -27,5 +27,5 @@ async def subscriptions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await update.message.reply_text(
         f"> active subscriptions\n\n"
         f"{city_list}\n\n\n"
-        f"$ /unsubscribe <city_name> to remove"
+        f"$ /unsubscribe <city> to remove"
     )

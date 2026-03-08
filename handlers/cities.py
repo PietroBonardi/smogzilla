@@ -12,7 +12,7 @@ async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         f"*SMOGZILLA // CITIES*\n"
         f"```\n"
         f"{city_list}\n\n"
-        f"$ /air <city_name>\n"
+        f"$ /air <city>\n"
         f"```",
         parse_mode="Markdown"
     )
