@@ -1,5 +1,5 @@
 from utils.cities import CITIES
-from config import PM25_THRESHOLD, PM10_THRESHOLD
+from config import PM25_THRESHOLD, PM10_THRESHOLD, DELTA
 import pandas as pd
 
 
@@ -42,11 +42,11 @@ def format_message(city_key: str, data: dict) -> str:
 
     # alerts
     alerts = []
-    if avg_pm25 > PM25_THRESHOLD:
-        ratio = round(avg_pm25 / PM25_THRESHOLD, 2)
+    if avg_pm25 > PM25_THRESHOLD+DELTA:
+        ratio = round(avg_pm25 / PM25_THRESHOLD, 1)
         alerts.append(f"   PM2.5 is {ratio:.1f}x the safe limit")
-    if avg_pm10 > PM10_THRESHOLD:
-        ratio = round(avg_pm10 / PM10_THRESHOLD, 2)
+    if avg_pm10 > PM10_THRESHOLD+DELTA:
+        ratio = round(avg_pm10 / PM10_THRESHOLD, 1)
         alerts.append(f"   PM10  is {ratio:.1f}x the safe limit")
 
     alert_count = len(alerts)
