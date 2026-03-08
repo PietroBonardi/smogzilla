@@ -61,19 +61,18 @@ def build_scheduler(app: Application) -> AsyncIOScheduler:
     )
     return scheduler
 
-from datetime import datetime, timedelta
 
-def test_build_scheduler(app: Application) -> AsyncIOScheduler:
-    scheduler = AsyncIOScheduler()
-
-    test_time = datetime.now() + timedelta(minutes=1)
-
-    scheduler.add_job(
-        send_daily_reports,
-        trigger=CronTrigger(hour=test_time.hour, minute=test_time.minute),
-        args=[app],
-        id="daily_reports",
-        name="Daily air quality reports",
-        replace_existing=True,
-    )
-    return scheduler
+# def test_build_scheduler(app: Application) -> AsyncIOScheduler:
+#     from datetime import datetime, timedelta
+#     scheduler = AsyncIOScheduler()
+#     test_time = datetime.now() + timedelta(minutes=1)
+#     scheduler.add_job(
+#         send_daily_reports,
+#         trigger=CronTrigger(hour=test_time.hour, minute=test_time.minute),
+#         args=[app],
+#         id="daily_reports",
+#         name="Daily air quality reports",
+#         replace_existing=True,
+#     )
+#
+#     return scheduler
