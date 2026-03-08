@@ -4,17 +4,17 @@ import pandas as pd
 
 
 def _pm25_status(value: float) -> str:
-    if value <= 15: return "[OK]"
-    if value <= 25: return "[WARN]"
-    if value <= 50: return "[HIGH]"
-    return "[CRITICAL]"
-
+    if value <= 15: return "⣀⣀⣀ [OK]"
+    if value <= 25: return "⣤⣀⣀ [WARN]"
+    if value <= 50: return "⣤⣶⣀ [HIGH]"
+    return "⣤⣶⣿ [CRITICAL]"
+ 
 
 def _pm10_status(value: float) -> str:
-    if value <= 20: return "[OK]"
-    if value <= 45: return "[WARN]"
-    if value <= 90: return "[HIGH]"
-    return "[CRITICAL]"
+    if value <= 20: return "⣀⣀⣀ [OK]"
+    if value <= 45: return "⣤⣀⣀ [WARN]"
+    if value <= 90: return "⣤⣶⣀ [HIGH]"
+    return "⣤⣶⣿ [CRITICAL]  "
 
 
 def aggregate_readings(data: dict) -> pd.DataFrame:
@@ -61,8 +61,8 @@ def format_message(city_key: str, data: dict) -> str:
         f"```\n"
         f"{latest}\n"
         f"sensors  {n_sensors} active\n\n"
-        f"PM2.5    {avg_pm25} µg/m³    {_pm25_status(avg_pm25)}\n"
-        f"PM10     {avg_pm10} µg/m³    {_pm10_status(avg_pm10)}\n\n"
+        f"PM2.5    {avg_pm25:.1f} µg/m³    {_pm25_status(avg_pm25)}\n"
+        f"PM10     {avg_pm10:.1f} µg/m³    {_pm10_status(avg_pm10)}\n\n"
         f"{alert_text}\n"
         f"```"
     )
