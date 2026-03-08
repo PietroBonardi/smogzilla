@@ -21,6 +21,7 @@ CITIES: dict[str, City] = {
     "pavia":     City("Pavia",     45.1847, 9.1582,   "PV", "Lombardia"),
     "cremona":   City("Cremona",   45.1333, 10.0333,  "CR", "Lombardia"),
     "mantova":   City("Mantova",   45.1564, 10.7913,  "MN", "Lombardia"),
+    "cesano":    City("Cesano Maderno", 45.62915, 9.15189, "CM", "Lombardia"),
     "genova":    City("Genova",    44.4056, 8.9463,   "GE", "Liguria"),
 
     "verona":    City("Verona",    45.4384, 10.9916,  "VR", "Veneto"),
