@@ -26,6 +26,7 @@ async def post_init(app: Application) -> None:
     logging.info("[scheduler] started")
 
 
+
 def main():
     init_db()
 

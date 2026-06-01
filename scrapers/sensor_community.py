@@ -20,11 +20,16 @@ def _parse_readings(data: list[dict]) -> dict | None:
         sensor_id = read["sensor"]["id"]
         values = {v["value_type"]: float(v["value"]) for v in read["sensordatavalues"]}
         pm10 = values.get("P1")
-        pm25 = values.get("P2")
-        results["sensor_id"].append(sensor_id)
-        results["timestamp"].append(read["timestamp"])
-        results["pm2.5"].append(pm25)
-        results["pm10"].append(pm10)
+        pm25 = values.get("P2") 
+        
+        if pm10:
+            results["pm10"].append(pm10)
+        if pm25:
+            results["pm2.5"].append(pm25)
+        
+        if pm10 or pm25:
+            results["sensor_id"].append(sensor_id)
+            results["timestamp"].append(read["timestamp"])
 
     return results
 
@@ -47,4 +52,6 @@ async def fetch_by_sensor(sensor_id: int) -> dict | None:
         r = await client.get(url, headers=HEADERS)
         r.raise_for_status()
         data = r.json()
+    
     return _parse_readings(data)
+
