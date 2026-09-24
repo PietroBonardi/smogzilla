@@ -147,9 +147,3 @@ async def fetch_by_area(
         radius_km = SENSOR_RADIUS
     url = f"{BASE_URL}/filter/area={lat},{lng},{radius_km}"
     return _parse_sensors(await _fetch(url))
-
-
-async def fetch_by_sensor(sensor_id: int) -> List[SensorReading]:
-    """Fetch readings from a single sensor by ID."""
-    url = f"{BASE_URL}/sensor/{sensor_id}/"
-    return _parse_sensors(await _fetch(url))

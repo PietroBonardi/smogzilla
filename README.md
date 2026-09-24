@@ -1,6 +1,6 @@
 # smogzilla
 
-Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggregates PM2.5/PM10 data from [sensor.community](https://sensor.community) and sends daily health alerts to subscribers.
+Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggregates PM2.5/PM10 data from [sensor.community](https://sensor.community) and reports on demand.
 
 ## Commands
 
@@ -9,16 +9,11 @@ Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggr
 | `/start` | Help and usage info |
 | `/air <city>` | On-demand air quality report for a city |
 | `/cities` | List supported cities |
-| `/subscribe <city>` | Get daily 08:00 reports for a city |
-| `/unsubscribe <city>` | Cancel daily reports |
-| `/subscriptions` | List your active subscriptions |
 
 ## How it works
 
 - `scrapers/sensor_community.py` fetches readings from the sensor.community airrohr API (with retries)
-- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/median/p95/max) against WHO thresholds
-- `scheduler.py` pushes daily reports at 08:00 to all subscribers
-- `storage.py` persists subscriptions in SQLite (`smogzilla.db`)
+- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/min/max) against WHO thresholds; p95 drives hotspot alerts
 
 ## Getting started
 

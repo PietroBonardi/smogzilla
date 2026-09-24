@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from utils.cities import CITIES
+from utils.city_data import CITIES
 
 
 async def cities(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
