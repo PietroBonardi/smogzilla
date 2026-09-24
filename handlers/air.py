@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from scrapers.sensor_community import fetch_by_area
 from formatter import format_message
-from utils.cities import CITIES
+from utils.city_data import CITIES
 
 async def air(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:

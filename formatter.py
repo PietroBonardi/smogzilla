@@ -5,7 +5,7 @@ from typing import Callable, Dict, List, Optional
 import pandas as pd
 
 from config import DELTA, PM10_THRESHOLD, PM25_THRESHOLD
-from utils.cities import CITIES
+from utils.city_data import CITIES
 
 
 def _pm25_status(value: float) -> str:
@@ -35,16 +35,15 @@ def aggregate_readings(data: dict) -> pd.DataFrame:
         .reset_index()
     )
 
-
+    
 def _stats(values: pd.Series) -> Dict[str, Optional[float]]:
     """City-wide summary statistics, robust to NaN readings."""
     clean = values.dropna()
     if clean.empty:
-        return {"mean": None, "median": None, "p95": None, "max": None}
+        return {"mean": None, "min": None, "p95": None, "max": None}
     return {
         "mean": float(clean.mean()),
-        "median": float(clean.median()),
-        "p95": float(clean.quantile(0.95)),
+        "min": float(clean.min()),
         "max": float(clean.max()),
     }
 
@@ -56,14 +55,12 @@ def _value_line(label: str, stats: Dict[str, Optional[float]], status_fn: Callab
     return f"{label}    {value} µg/m³    {bar}"
 
 
-def _stats_line(stats: Dict[str, Optional[float]]) -> str:
-    if stats["median"] is None:
-        return "         no data"
-    return (
-        f"         med {stats['median']:.1f}"
-        f"  p95 {stats['p95']:.1f}"
-        f"  max {stats['max']:.1f}"
-    )
+def _minmax_line(label: str, stats_by_label: Dict[str, Dict[str, Optional[float]]]) -> str:
+    parts = []
+    for pollutant, stats in stats_by_label.items():
+        value = stats[label]
+        parts.append(f"{pollutant} {value:.1f}" if value is not None else f"{pollutant} --")
+    return f"{label}  " + "    ".join(parts)
 
 
 def _pollutant_alerts(label: str, stats: Dict[str, Optional[float]], threshold: float) -> List[str]:
@@ -89,14 +86,20 @@ def format_message(city_key: str, data: dict) -> str:
 
     body_lines: List[str] = []
     alerts: List[str] = []
+    stats_by_label: Dict[str, Dict[str, Optional[float]]] = {}
     for label, column, threshold, status_fn in (
         ("PM2.5", "pm25", PM25_THRESHOLD, _pm25_status),
         ("PM10 ", "pm10", PM10_THRESHOLD, _pm10_status),
     ):
         stats = _stats(agg_data[column])
+        stats_by_label[label.strip()] = stats
         body_lines.append(_value_line(label, stats, status_fn))
-        body_lines.append(_stats_line(stats))
         alerts.extend(_pollutant_alerts(label, stats, threshold))
+
+    minmax_lines = [
+        _minmax_line("min", stats_by_label),
+        _minmax_line("max", stats_by_label),
+    ]
 
     alert_count = len(alerts)
     alert_text = (
@@ -112,6 +115,7 @@ def format_message(city_key: str, data: dict) -> str:
         f"{latest}\n"
         f"sensors  {n_sensors} active\n\n"
         f"{body}\n\n"
+        f"{chr(10).join(minmax_lines)}\n"
         f"{alert_text}\n"
         "```"
     )
