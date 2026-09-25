@@ -126,6 +126,10 @@ async def _fetch(url: str) -> List[Dict[str, Any]]:
     async with httpx.AsyncClient(timeout=TIMEOUT, headers=HEADERS) as client:
         response = await client.get(url)
 
+        if response.status_code >= 500:
+            # raise so the tenacity decorator can retry the request
+            response.raise_for_status()
+
         if response.status_code >= 400:
             logger.warning("sensor.community returned %s for %s", response.status_code, url)
             return []

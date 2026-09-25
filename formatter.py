@@ -45,6 +45,7 @@ def _stats(values: pd.Series) -> Dict[str, Optional[float]]:
         "mean": float(clean.mean()),
         "min": float(clean.min()),
         "max": float(clean.max()),
+        "p95": float(clean.quantile(0.95)),
     }
 
 
