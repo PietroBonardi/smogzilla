@@ -13,7 +13,7 @@ Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggr
 ## How it works
 
 - `scrapers/sensor_community.py` fetches readings from the sensor.community airrohr API (with retries)
-- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/min/max) against WHO thresholds; p95 drives hotspot alerts
+- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/min/max) against WHO thresholds
 
 ## Getting started
 
