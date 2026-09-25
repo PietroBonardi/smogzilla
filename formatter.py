@@ -40,7 +40,7 @@ def _stats(values: pd.Series) -> Dict[str, Optional[float]]:
     """City-wide summary statistics, robust to NaN readings."""
     clean = values.dropna()
     if clean.empty:
-        return {"mean": None, "min": None, "p95": None, "max": None}
+        return {"mean": None, "min": None, "max": None}
     return {
         "mean": float(clean.mean()),
         "min": float(clean.min()),
@@ -70,10 +70,6 @@ def _pollutant_alerts(label: str, stats: Dict[str, Optional[float]], threshold: 
     if mean > threshold + DELTA:
         ratio = round(mean / threshold, 1)
         return [f"   {label} is {ratio:.1f}x the safe limit"]
-    p95 = stats["p95"]
-    if p95 is not None and p95 > threshold + DELTA:
-        ratio = round(p95 / threshold, 1)
-        return [f"   {label.strip()} hotspot: p95 is {ratio:.1f}x the safe limit"]
     return []
 
 

@@ -13,7 +13,7 @@ Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggr
 ## How it works
 
 - `scrapers/sensor_community.py` fetches readings from the sensor.community airrohr API (with retries)
-- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/min/max) against WHO thresholds; p95 drives hotspot alerts
+- `formatter.py` aggregates readings per sensor and computes city-wide stats (mean/min/max) against WHO thresholds
 
 ## Getting started
 
@@ -33,8 +33,20 @@ SENSOR_RADIUS=10    # sensor search radius in km
 
 ## Testing
 
+Install dev dependencies (`pip install -r requirements-dev.txt`) then run:
+
 ```
 pytest
 ```
+
+The suite is layered and selectable by marker:
+
+| Layer | Command | Scope |
+|---|---|---|
+| Unit | `pytest -m unit` | Pure helpers (`_parse_sensors`, `_stats`, status bands) |
+| Integration | `pytest -m integration` | Handlers + scraper + formatter over a mocked HTTP transport |
+| E2E | `pytest -m e2e` | Commands dispatched through the wired `Application` |
+
+All network I/O is mocked; no real calls to Telegram or sensor.community are made.
 
 Data source: [sensor.community](https://sensor.community) — thanks to all citizen sensor hosts.

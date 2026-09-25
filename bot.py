@@ -15,10 +15,10 @@ async def error_handler(update: object, context) -> None:
     logging.error(f"[error] {context.error}")
 
 
-def main():
+def build_application(token: str | None = None) -> Application:
     app = (
         Application.builder()
-        .token(TELEGRAM_BOT_TOKEN)
+        .token(token or TELEGRAM_BOT_TOKEN)
         .build()
     )
 
@@ -26,6 +26,11 @@ def main():
     app.add_handler(CommandHandler("air",           air))
     app.add_handler(CommandHandler("cities",        cities))
     app.add_error_handler(error_handler)
+    return app
+
+
+def main():
+    app = build_application()
     logging.info("==========================")
     logging.info("Smogzilla bot is running...")
     app.run_polling()
