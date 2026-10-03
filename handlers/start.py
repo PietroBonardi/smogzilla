@@ -11,5 +11,5 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Real-time air quality for Italian cities.\n\n"
         "$ /cities - list available cities\n"
         "$ /air <city> - get air quality report\n\n"
-        "data: sensor.community"
+        "data: sensor.community + waqi.info"
     )
