@@ -81,6 +81,7 @@ def test_parse_sensors_last_strategy_with_pollutant_fallback():
             "pm2.5": 7.0,
             "pm10": 12.0,
             "timestamp": "2026-09-04 22:50:00",
+            "source": "sensor.community",
         }
     ]
 
