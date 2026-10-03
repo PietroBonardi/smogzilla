@@ -1,20 +1,20 @@
 # Test Coverage
 
-Generated from the `main` branch at commit `903f134`.
+Generated from the `feature/waqi-scraper` branch at commit `559a291`.
 
 ## Summary
 
 | Metric | Value |
 |---|---|
 | Test framework | pytest 9.1.1 (`pytest-asyncio`, `pytest-cov`) |
-| Tests | 80 passed |
-| Overall statement coverage | **96%** (210 statements, 8 missed) |
+| Tests | 74 passed (unit + integration) |
+| Overall statement coverage | **74%** (336 statements, 86 missed) |
 
 ## Reproduce
 
 ```bash
 pip install -r requirements-dev.txt
-pytest --cov=bot --cov=config --cov=formatter \
+pytest -m "unit or integration" --cov=bot --cov=config --cov=formatter \
        --cov=handlers --cov=scrapers --cov=utils \
        --cov-report=term-missing
 ```
@@ -22,33 +22,33 @@ pytest --cov=bot --cov=config --cov=formatter \
 ## Per-file coverage
 
 | Name | Stmts | Miss | Cover | Missing |
-|---|---:|---:|---:|---|
-| `bot.py` | 23 | 6 | 74% | 15, 33-36, 40 |
-| `config.py` | 8 | 0 | 100% | — |
+|---|---|---:|---:|---|
+| `config.py` | 9 | 0 | 100% | — |
 | `formatter.py` | 59 | 0 | 100% | — |
 | `handlers/__init__.py` | 0 | 0 | 100% | — |
-| `handlers/air.py` | 22 | 1 | 95% | 9 |
+| `handlers/air.py` | 38 | 11 | 71% | 21-24, 29-30, 35, 38-42, 46-50 |
 | `handlers/cities.py` | 6 | 0 | 100% | — |
 | `handlers/start.py` | 6 | 1 | 83% | 7 |
 | `scrapers/__init__.py` | 0 | 0 | 100% | — |
-| `scrapers/sensor_community.py` | 77 | 0 | 100% | — |
+| `scrapers/base.py` | 7 | 1 | 86% | 28 |
+| `scrapers/sensor_community.py` | 86 | 1 | 99% | 168 |
+| `scrapers/types.py` | 26 | 10 | 62% | 40, 45-52, 55-56 |
+| `scrapers/waqi.py` | 95 | 62 | 35% | 59-61, 75-77, 93-95, 101-102, 111-126, 130-131, 135-140, 147-154, 158, 162, 166-169, 177-208 |
 | `utils/__init__.py` | 0 | 0 | 100% | — |
-| `utils/city_data.py` | 9 | 0 | 100% | — |
-| **TOTAL** | **210** | **8** | **96%** | |
+| `utils/city_data.py` | 4 | 0 | 100% | — |
+| **TOTAL** | **336** | **86** | **74%** | |
 
-## Uncovered lines explained
+## Uncovered hot spots
 
-| Location | Code | Why it is uncovered |
-|---|---|---|
-| `bot.py:15` | `error_handler` body | The error handler is registered but no test triggers a handler exception. |
-| `bot.py:33-36` | `main()` | Starts real long-polling against Telegram; intentionally not exercised in tests. |
-| `bot.py:40` | `if __name__ == "__main__"` guard | Module entrypoint, not run under pytest. |
-| `handlers/air.py:9` | `if not update.message: return` | Guard for updates without a message; not hit by command updates. |
-| `handlers/start.py:7` | `if not update.message: return` | Same guard as above. |
+| Location | Why uncovered |
+|---|---|
+| `scrapers/waqi.py` (62 lines, 35% covered) | New module; parsing + HTTP layer lack dedicated unit tests |
+| `handlers/air.py` (11 lines, 71% covered) | Several early-return paths (no message, missing args, unknown city) only exercised via mocks |
+| `scrapers/types.py` (10 lines, 62% covered) | `is_fresh` timezone-naive and parse-failure branches not directly tested |
 
-All remaining application logic — scraper parsing, retry behavior, statistics,
-status bands, alerting, city data, and the full command dispatch path — is
-covered.
+Adding unit tests for `WaqiScraper._parse_feed` and the IAQI conversion helpers is the
+highest-impact follow-up: those functions are pure and easy to exercise with canned
+payloads, and would lift total coverage back above 90%.
 
 ## Coverage by layer
 
@@ -56,4 +56,4 @@ covered.
 |---|---|---:|
 | Unit | `pytest -m unit` | 64 |
 | Integration | `pytest -m integration` | 10 |
-| E2E | `pytest -m e2e` | 6 |
+| E2E | `pytest -m e2e` | 6 (currently skipped — ptb `_initialized` mismatch in environment) |
