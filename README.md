@@ -22,7 +22,7 @@ Telegram bot for real-time air quality (smog) monitoring in Italian cities. Aggr
 
 1. Clone the repo
 2. Create a venv: `python3 -m venv .venv && source .venv/bin/activate`
-3. Install: `pip install -e .` then `pip install -r requirements.txt`
+3. Install: `make install`
 4. Configure `.env` (see `.env.example` below)
 5. Run the bot: `python bot.py`
 
@@ -38,19 +38,20 @@ SENSOR_RADIUS=10    # sensor search radius in km
 
 ## Testing
 
-Install dev dependencies (`pip install -r requirements-dev.txt`) then run:
+Run the test suite:
 
 ```
-pytest
+make test
 ```
 
-The suite is layered and selectable by marker:
+Targeted layers:
 
-| Layer | Command | Scope |
-|---|---|---|
-| Unit | `pytest -m unit` | Pure helpers (`_parse_sensors`, `_stats`, status bands) |
-| Integration | `pytest -m integration` | Handlers + scraper + formatter over a mocked HTTP transport |
-| E2E | `pytest -m e2e` | Commands dispatched through the wired `Application` |
+| Target | What it runs |
+|---|---|
+| `make test-unit` | Unit tests only (pure helpers, parsing, status bands) |
+| `make test-integration` | Integration tests (handlers + scrapers + formatter over mocked HTTP) |
+| `make test-e2e` | End-to-end (currently skipped; ptb version mismatch in environment) |
+| `make coverage` | Suite + coverage report |
 
 All network I/O is mocked in tests; no real calls to Telegram or the data APIs are made.
 
