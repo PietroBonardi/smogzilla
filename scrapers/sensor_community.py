@@ -1,8 +1,16 @@
-"""Async scraper for the sensor.community airrohr API (https://sensor.community)."""
+"""Scraper for the sensor.community airrohr API (https://sensor.community).
+
+The module-level helpers (`_fetch`, `_parse_sensors`, `_reduce`, `_safe_float`,
+`_is_transient_error`, `_log_exhausted`) and constants (`POLLUTANT_MAP`,
+`REDUCE_STRATEGY`, `BASE_URL`, `HEADERS`, `TIMEOUT`) implement the actual
+pipeline. ``SensorCommunityScraper`` is a thin ``BaseScraper`` adapter around
+them, and the module-level ``fetch_by_area`` is preserved as a backwards-compat
+shim delegating to a default scraper instance.
+"""
 
 import logging
 from statistics import median
-from typing import Any, Dict, List, Optional, Tuple, TypedDict
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 from tenacity import (
@@ -13,6 +21,8 @@ from tenacity import (
 )
 
 from config import SENSOR_RADIUS
+from scrapers.base import BaseScraper
+from scrapers.types import SensorReading, is_fresh
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +35,6 @@ POLLUTANT_MAP = {"P1": "pm10", "P2": "pm2.5"}
 
 # How to combine multiple records of the same sensor: "last" | "median" | "mean"
 REDUCE_STRATEGY = "last"
-
-
-# "pm2.5" contains a dot, so the functional TypedDict syntax is required
-SensorReading = TypedDict(
-    "SensorReading",
-    {
-        "sensor_id": int,
-        "timestamp": str,
-        "pm2.5": Optional[float],
-        "pm10": Optional[float],
-    },
-)
 
 
 def _safe_float(raw: Any) -> Optional[float]:
@@ -97,6 +95,7 @@ def _parse_sensors(records: List[Dict[str, Any]]) -> List[SensorReading]:
                 "pm2.5": pm25,
                 "pm10": pm10,
                 "timestamp": timestamps[sensor_id],
+                "source": "sensor.community",
             }
         )
 
@@ -141,13 +140,39 @@ async def _fetch(url: str) -> List[Dict[str, Any]]:
             return []
 
 
-async def fetch_by_area(
-    lat: float,
-    lng: float,
-    radius_km: Optional[int] = None,
-) -> List[SensorReading]:
-    """Fetch readings from all sensors within radius_km of (lat, lng)."""
-    if radius_km is None:
-        radius_km = SENSOR_RADIUS
-    url = f"{BASE_URL}/filter/area={lat},{lng},{radius_km}"
-    return _parse_sensors(await _fetch(url))
+class SensorCommunityScraper(BaseScraper):
+    """``BaseScraper`` adapter for the sensor.community airrohr API.
+
+    Stateless: it delegates to the module-level ``_fetch`` and ``_parse_sensors``
+    so existing tests that patch those names keep working unchanged.
+    """
+
+    source = "sensor.community"
+
+    async def fetch_by_area(
+        self,
+        lat: float,
+        lng: float,
+        radius_km: Optional[int] = None,
+    ) -> List[SensorReading]:
+        """Fetch fresh readings from all sensors within ``radius_km`` of (lat, lng).
+
+        Readings whose timestamps are older than ``MAX_AGE_HOURS`` are dropped.
+        """
+        if radius_km is None:
+            radius_km = SENSOR_RADIUS
+        url = f"{BASE_URL}/filter/area={lat},{lng},{radius_km}"
+        readings = _parse_sensors(await _fetch(url))
+        fresh = [r for r in readings if is_fresh(r["timestamp"])]
+        if len(fresh) < len(readings):
+            logger.info(
+                "sensor.community dropped %d stale reading(s) out of %d",
+                len(readings) - len(fresh),
+                len(readings),
+            )
+        return fresh
+
+
+# Backwards-compat shim: previous module-level API used by handlers and tests.
+_default_scraper = SensorCommunityScraper()
+fetch_by_area = _default_scraper.fetch_by_area

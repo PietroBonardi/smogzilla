@@ -109,9 +109,10 @@ Dashboard in prod; `.env` locally. Template: `.env.example`.
 | Variable | Used by | Notes |
 |---|---|---|
 | `TELEGRAM_BOT_TOKEN` | `config.py:6` | Required |
-| `PM25_THRESHOLD` | `config.py:8` | WHO 24h limit, default `15.0` |
-| `PM10_THRESHOLD` | `config.py:9` | WHO 24h limit, default `45.0` |
-| `SENSOR_RADIUS` | `config.py:10` | km, default `10` |
+| `WAQI_API_TOKEN` | `config.py:7` | Optional; enables WAQI source. Get one at https://aqicn.org/data-platform/token/ |
+| `PM25_THRESHOLD` | `config.py:9` | WHO 24h limit, default `15.0` |
+| `PM10_THRESHOLD` | `config.py:10` | WHO 24h limit, default `45.0` |
+| `SENSOR_RADIUS` | `config.py:11` | km, default `10` |
 
 ---
 

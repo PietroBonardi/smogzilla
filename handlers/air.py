@@ -1,8 +1,34 @@
+import asyncio
+import logging
+from typing import List
+
 from telegram import Update
 from telegram.ext import ContextTypes
-from scrapers.sensor_community import fetch_by_area
+
+from config import WAQI_API_TOKEN
 from formatter import format_message
+from scrapers.base import BaseScraper
+from scrapers.sensor_community import SensorCommunityScraper
+from scrapers.types import SensorReading
+from scrapers.waqi import WaqiScraper
 from utils.city_data import CITIES
+
+logger = logging.getLogger(__name__)
+
+
+def _build_scrapers() -> List[BaseScraper]:
+    """Instantiate available scrapers. Skip WAQI when its token is missing."""
+    scrapers: List[BaseScraper] = [SensorCommunityScraper()]
+    if WAQI_API_TOKEN:
+        scrapers.append(WaqiScraper(token=WAQI_API_TOKEN))
+    return scrapers
+
+
+async def _fetch_all(lat: float, lng: float) -> List[SensorReading]:
+    """Fan out to every scraper in parallel and merge their readings."""
+    results = await asyncio.gather(*(s.fetch_by_area(lat, lng) for s in _build_scrapers()))
+    return [reading for source_results in results for reading in source_results]
+
 
 async def air(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message:
@@ -29,7 +55,7 @@ async def air(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode="Markdown"
     )
 
-    data = await fetch_by_area(city.lat, city.lng)
+    data = await _fetch_all(city.lat, city.lng)
     if not data:
         await update.message.reply_text(
             f"```\n!! no sensor data received for {city.name.upper()}\n```",

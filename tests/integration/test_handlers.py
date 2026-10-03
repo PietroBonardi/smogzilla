@@ -12,7 +12,6 @@ from telegram import Chat, Message, Update, User
 from handlers.air import air
 from handlers.cities import cities
 from handlers.start import start
-from tests.conftest import make_record
 from utils.city_data import CITIES
 
 pytestmark = pytest.mark.integration
@@ -35,18 +34,17 @@ class _Context:
 
 
 async def test_air_handler_renders_report_from_parsed_readings(monkeypatch):
-    records = [make_record(1, "t1", [("P1", "9.0"), ("P2", "4.0")])]
     parsed = [
-        {"sensor_id": 1, "pm2.5": 4.0, "pm10": 9.0, "timestamp": "t1"},
+        {"sensor_id": 1, "pm2.5": 4.0, "pm10": 9.0, "timestamp": "t1", "source": "sensor.community"},
     ]
 
     import handlers.air as air_module
 
-    async def fake_fetch(lat, lng, radius_km=None):
+    async def fake_fetch_all(lat, lng):
         assert (lat, lng) == (CITIES["milano"].lat, CITIES["milano"].lng)
         return parsed
 
-    monkeypatch.setattr(air_module, "fetch_by_area", fake_fetch)
+    monkeypatch.setattr(air_module, "_fetch_all", fake_fetch_all)
 
     reply = AsyncMock()
     monkeypatch.setattr(Message, "reply_text", reply)
@@ -63,10 +61,10 @@ async def test_air_handler_renders_report_from_parsed_readings(monkeypatch):
 async def test_air_handler_no_data_path(monkeypatch):
     import handlers.air as air_module
 
-    async def fake_fetch(lat, lng, radius_km=None):
+    async def fake_fetch_all(lat, lng):
         return []
 
-    monkeypatch.setattr(air_module, "fetch_by_area", fake_fetch)
+    monkeypatch.setattr(air_module, "_fetch_all", fake_fetch_all)
     reply = AsyncMock()
     monkeypatch.setattr(Message, "reply_text", reply)
 
